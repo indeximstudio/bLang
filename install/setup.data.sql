@@ -20,11 +20,11 @@ CREATE TABLE `{PREFIX}blang_settings` (
 # Dumping data for table `{PREFIX}blang_settings`
 #
 
-INSERT INTO `{PREFIX}blang_settings` VALUES ('yadexn_lang_key','');
+INSERT INTO `{PREFIX}blang_settings` VALUES ('yadexn_lang_key','ua==uk');
 
 INSERT INTO `{PREFIX}blang_settings` VALUES ('translate_provider','yandex');
 
-INSERT INTO `{PREFIX}blang_settings` VALUES ('fields','1');
+INSERT INTO `{PREFIX}blang_settings` VALUES ('fields','');
 
 INSERT INTO `{PREFIX}blang_settings` VALUES ('translate','0');
 
