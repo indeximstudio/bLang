@@ -4,12 +4,12 @@ use bLang\bLang;
 use bLang\translate;
 
 $e = $modx->event;
-require_once MODX_BASE_PATH . 'assets/modules/bLang/classes/bLang.php';
-require_once MODX_BASE_PATH . 'assets/modules/bLang/classes/translate.php';
+require_once MODX_BASE_PATH . 'assets/modules/blang/classes/bLang.php';
+require_once MODX_BASE_PATH . 'assets/modules/blang/classes/translate.php';
 require_once MODX_BASE_PATH . 'assets/snippets/DocLister/core/DocLister.abstract.php';
-require_once MODX_BASE_PATH . 'assets/modules/bLang/classes/bLangLexiconHandler.php';
-require_once MODX_BASE_PATH . 'assets/modules/bLang/classes/lang_menu.php';
-require_once MODX_BASE_PATH . 'assets/modules/bLang/classes/lang_content.php';
+require_once MODX_BASE_PATH . 'assets/modules/blang/classes/bLangLexiconHandler.php';
+require_once MODX_BASE_PATH . 'assets/modules/blang/classes/lang_menu.php';
+require_once MODX_BASE_PATH . 'assets/modules/blang/classes/lang_content.php';
 
 if (bLang::$isInit === false && in_array($e->name, ['OnMakeDocUrl'])) {
     return false;

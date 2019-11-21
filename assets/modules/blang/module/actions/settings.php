@@ -102,12 +102,12 @@ class settings
             ]
         ];
 
-        $translatorFolders = scandir(MODX_BASE_PATH.'assets/modules/bLang/translator/');
+        $translatorFolders = scandir(MODX_BASE_PATH.'assets/modules/blang/translator/');
         $translatorElements = '';
         foreach ($translatorFolders as $fileName) {
             if(in_array($fileName,['.','..'])) continue;
             $translatorElements .= '||'.$fileName.'=='.$fileName;
-            $transLateConfig = json_decode(file_get_contents(MODX_BASE_PATH.'assets/modules/bLang/translator/'.$fileName.'/config.json'),true);
+            $transLateConfig = json_decode(file_get_contents(MODX_BASE_PATH.'assets/modules/blang/translator/'.$fileName.'/config.json'),true);
 
 
 

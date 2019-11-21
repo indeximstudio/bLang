@@ -12,17 +12,17 @@ if (!$modx->hasPermission('exec_module')) {
     header("location: " . $modx->getManagerPath() . "?a=106");
 }
 include_once(MODX_BASE_PATH . 'assets/snippets/DocLister/lib/DLTemplate.class.php');
-include_once(MODX_BASE_PATH . 'assets/modules/bLang/classes/bLangModule.php');
-include_once(MODX_BASE_PATH . 'assets/modules/bLang/classes/bLang.php');
-include_once(MODX_BASE_PATH . 'assets/modules/bLang/module/actions/params.php');
-include_once(MODX_BASE_PATH . 'assets/modules/bLang/module/actions/settings.php');
+include_once(MODX_BASE_PATH . 'assets/modules/blang/classes/bLangModule.php');
+include_once(MODX_BASE_PATH . 'assets/modules/blang/classes/bLang.php');
+include_once(MODX_BASE_PATH . 'assets/modules/blang/module/actions/params.php');
+include_once(MODX_BASE_PATH . 'assets/modules/blang/module/actions/settings.php');
 
 $action = isset($_GET['action'])?$_GET['action']:'home';
 $moduleurl = 'index.php?a=112&id=' . $_GET['id'] . '&';
-$modulePath = MODX_BASE_PATH . 'assets/modules/bLang/module/';
+$modulePath = MODX_BASE_PATH . 'assets/modules/blang/module/';
 
 $tpl = DLTemplate::getInstance($modx);
-$tpl->setTemplatePath('assets/modules/bLang/module/templates/');
+$tpl->setTemplatePath('assets/modules/blang/module/templates/');
 $tpl->setTemplateExtension('tpl');
 
 $bLang =  bLang::GetInstance($modx);

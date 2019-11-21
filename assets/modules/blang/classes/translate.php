@@ -28,7 +28,7 @@ class  translate
         $settings = $this->bLang->getSettings();
         $provider = $settings['translate_provider'];
 
-        require_once MODX_BASE_PATH . 'assets/modules/bLang/translator/' . $provider . '/index.php';
+        require_once MODX_BASE_PATH . 'assets/modules/blang/translator/' . $provider . '/index.php';
     }
 
     public function translate($string, $from, $to)

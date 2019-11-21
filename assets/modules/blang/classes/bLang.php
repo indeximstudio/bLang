@@ -124,7 +124,7 @@ class bLang
 
     public function InListLang()
     {
-        $curr = $_GET['lang'];
+        $curr = $_GET['lang'] ?? '';
         $result = false;
 
         foreach ($this->languages as $key => $value) {

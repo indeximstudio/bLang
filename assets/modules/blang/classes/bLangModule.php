@@ -17,10 +17,10 @@ class bLangModule
     {
         $manager_language = $this->modx->getConfig('manager_language');
 
-        $file = MODX_BASE_PATH . 'assets/modules/bLang/module/lang/' . $manager_language . '.inc.php';
+        $file = MODX_BASE_PATH . 'assets/modules/blang/module/lang/' . $manager_language . '.inc.php';
 
         if (!file_exists($file)) {
-            $file = MODX_BASE_PATH . 'assets/modules/bLang/module/lang/russian-UTF8.inc.php';
+            $file = MODX_BASE_PATH . 'assets/modules/blang/module/lang/russian-UTF8.inc.php';
         }
         require $file;
         $this->_lang =  $_lang;
