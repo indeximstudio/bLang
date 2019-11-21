@@ -13,4 +13,4 @@
  * @internal       @installset base, sample
  */
 
-require MODX_BASE_PATH.'assets/modules/blang/module/module.bLang.php';
+require MODX_BASE_PATH.'assets/modules/blang/module/module.blang.php';
