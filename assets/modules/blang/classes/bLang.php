@@ -1,5 +1,16 @@
 <?php
+
 namespace bLang;
+
+require_once MODX_BASE_PATH . 'assets/snippets/DocLister/lib/DLTemplate.class.php';
+require_once MODX_BASE_PATH . 'assets/modules/blang/classes/bLangModule.php';
+require_once MODX_BASE_PATH . 'assets/modules/blang/classes/translate.php';
+require_once MODX_BASE_PATH . 'assets/snippets/DocLister/core/DocLister.abstract.php';
+require_once MODX_BASE_PATH . 'assets/modules/blang/classes/bLangLexiconHandler.php';
+require_once MODX_BASE_PATH . 'assets/modules/blang/classes/lang_menu.php';
+require_once MODX_BASE_PATH . 'assets/modules/blang/classes/lang_content.php';
+require_once MODX_BASE_PATH . 'assets/modules/blang/classes/bLangInstall.php';
+
 
 class bLang
 {
@@ -9,7 +20,6 @@ class bLang
 
     /** @var $modx \DocumentParser */
     private $modx;
-
 
 
     public $defaultLang = '';
@@ -27,31 +37,36 @@ class bLang
     public static $firstPageMakeUrl = true;
 
 
-    public function getConfig(){
+    public function getConfig()
+    {
         return $this->config;
     }
-    public function getSettings($name=''){
-        if(!empty($name)){
+
+    public function getSettings($name = '')
+    {
+        if (!empty($name)) {
             return $this->settings[$name];
         }
         return $this->settings;
     }
+
     /**
      * Грузим настройки из базы данных
      */
-    public function loadSettings(){
+    public function loadSettings()
+    {
 
         $table = $this->modx->getFullTableName('blang_settings');
-        $settings = $this->modx->db->makeArray($this->modx->db->select('*',$table));
-        $this->settings = array_column($settings,'value','name');
+        $settings = $this->modx->db->makeArray($this->modx->db->select('*', $table));
+        $this->settings = array_column($settings, 'value', 'name');
 
     }
 
-    public function getLexicon($key=''){
-        if(empty($key)){
+    public function getLexicon($key = '')
+    {
+        if (empty($key)) {
             return $this->lexicon;
-        }
-        else if(isset($this->lexicon[$key])){
+        } else if (isset($this->lexicon[$key])) {
             return $this->lexicon[$key];
         }
 
@@ -59,32 +74,33 @@ class bLang
 
     }
 
-    private function parseSettingString($string){
+    private function parseSettingString($string)
+    {
         $cfg = [];
-        if(empty($string)) return $cfg;
+        if (empty($string)) return $cfg;
 
-        foreach (explode('||',$string) as $item) {
+        foreach (explode('||', $string) as $item) {
 
-            if(strpos($string,'==') !== false){
-                $itemArray = explode('==',$item);
+            if (strpos($string, '==') !== false) {
+                $itemArray = explode('==', $item);
                 $cfg[$itemArray[0]] = $itemArray[1];
-            }
-            else{
+            } else {
                 $cfg[] = $item;
             }
         }
         return $cfg;
 
     }
+
     /*
      * Устанавливаем параметры плагина относительно настроек модуля
      */
     private function setSettings()
     {
         //Список языков
-        $this->languages =  $this->parseSettingString($this->settings['languages']);
+        $this->languages = $this->parseSettingString($this->settings['languages']);
         // суффиксы полей
-        $this->suffixes =  $this->parseSettingString($this->settings['suffixes']);
+        $this->suffixes = $this->parseSettingString($this->settings['suffixes']);
         //язык по умолчанию
         $this->defaultLang = $this->settings['default'];
 
@@ -93,6 +109,7 @@ class bLang
         }
 
     }
+
     private function Initialise($modx)
     {
 
@@ -103,28 +120,28 @@ class bLang
 
 
         $InListLang = $this->InListLang();
-        $this->lang = !empty($_GET['lang']) && $InListLang?$_GET['lang']:$this->defaultLang;
-
+        $this->lang = !empty($_GET['lang']) && $InListLang ? $_GET['lang'] : $this->defaultLang;
+//
         $this->root = $this->roots[$this->lang];
         $this->suffix = $this->suffixes[$this->lang];
-
-        //проверяем есть ли язык с которым перешел пользователь в списке
-        //вернет false если значение $_GET['lang'] отсутствует в спписке
-
-
 //
+//        //проверяем есть ли язык с которым перешел пользователь в списке
+//        //вернет false если значение $_GET['lang'] отсутствует в спписке
+//
+//
+////
         if (!$InListLang && !empty($_GET['lang'])) {
-         $this->modx->sendErrorPage();
+            $this->modx->sendErrorPage();
             return;
         }
-//
+////
         $this->setConfig();
     }
 
 
     public function InListLang()
     {
-        $curr = $_GET['lang'] ?? '';
+        $curr = isset($_GET['lang']) ? $_GET['lang'] : '';
         $result = false;
 
         foreach ($this->languages as $key => $value) {
@@ -157,12 +174,12 @@ class bLang
         return self::$theirInstance;
     }
 
-    public function getLangUrl($url,$lang = null)
+    public function getLangUrl($url, $lang = null)
     {
         $siteUrl = $this->modx->getConfig('site_url');
         $root = $this->root;
 
-        if($lang !== null && isset($this->roots[$lang])){
+        if ($lang !== null && isset($this->roots[$lang])) {
             $root = $this->roots[$lang];
         }
 
@@ -185,23 +202,22 @@ class bLang
         $translateFields = [];
         foreach (glob(MODX_BASE_PATH . 'assets/modules/clientsettings/config/*.php') as $file) {
             $config = include $file;
-            if(empty($config['langFields'])) {
+            if (empty($config['langFields'])) {
                 continue;
             }
-            $translateFields = array_merge($translateFields,$config['langFields']);
+            $translateFields = array_merge($translateFields, $config['langFields']);
 
         }
 
 
         foreach ($translateFields as $fieldName) {
-            $fieldName = $prefix.$fieldName;
-            $fieldNameFull = $fieldName.$this->suffixes[$this->lang];
+            $fieldName = $prefix . $fieldName;
+            $fieldNameFull = $fieldName . $this->suffixes[$this->lang];
             $fieldValue = $this->modx->getConfig($fieldNameFull);
 
-            if(method_exists($this->modx,'setConfig')){
-                $this->modx->setConfig($fieldName,$fieldValue,true);
-            }
-            else{
+            if (method_exists($this->modx, 'setConfig')) {
+                $this->modx->setConfig($fieldName, $fieldValue, true);
+            } else {
                 $this->modx->config[$fieldName] = $fieldValue;
             }
         }
@@ -215,46 +231,39 @@ class bLang
     }
 
 
-
-
-
     private function setConfig()
     {
-
-
-
         $id = is_numeric($this->modx->documentIdentifier) ? $this->modx->documentIdentifier : $this->modx->getConfig('error_page');
 
-
-        $config['lang'] = $this->lang;
+        if ($this->modx->isBackend() === false) {
+            $config['lang'] = $this->lang;
+        }
         $config['root'] = $this->root;
+        $config['suffix'] = $this->suffix;
 
         $lang = [
-            '_lang'=>$this->lang,
-            '_root'=>$this->root,
+            '_lang' => $this->lang,
+            '_root' => $this->root,
         ];
 
         foreach ($this->languages as $key => $value) {
-            $config[$value . '_url'] = $this->getLangUrl($this->modx->makeUrl($id),$value);
-
-
-            $lang['_'.$value . '_url'] = $this->getLangUrl($this->modx->makeUrl($id),$value);
+            $config[$value . '_url'] = $this->getLangUrl($this->modx->makeUrl($id), $value);
+            $lang['_' . $value . '_url'] = $this->getLangUrl($this->modx->makeUrl($id), $value);
         }
 
 
-
-
         $_LANG = parse_ini_string($this->modx->getChunk($this->lang));
+
         if (!empty($_LANG)) {
             foreach ($_LANG as $key => $value) {
                 $config['_' . $key] = $value;
                 $lang[$key] = $value;
-                $this->lexicon[ $key] = $value;
+                $this->lexicon[$key] = $value;
             }
         }
 
 
-        $q = $this->modx->db->query("select * from ".$this->modx->getFullTableName('blang'));
+        $q = $this->modx->db->query("select * from " . $this->modx->getFullTableName('blang'));
         $res = $this->modx->db->makeArray($q);
 
         foreach ($res as $item) {
@@ -266,30 +275,27 @@ class bLang
             $config['_' . $key] = $value;
             $lang[$key] = $value;
 
-            $this->lexicon[ $key] = $value;
+            $this->lexicon[$key] = $value;
         }
 
-        if(method_exists($this->modx,'addDataToView')){
-            $this->modx->addDataToView(['lang'=>$lang]);
+        if (method_exists($this->modx, 'addDataToView')) {
+            $this->modx->addDataToView(['lang' => $lang]);
         }
-
 
 
         $this->config = $config;
         foreach ($config as $key => $value) {
-            $this->modx->config['_'.$key] = $value;
+            $this->modx->config['_' . $key] = $value;
 
         }
     }
 
 
-
-
-
-    private function changeFields($settings,$fieldKey,$changesFields,$captionTemplate){
+    private function changeFields($settings, $fieldKey, $changesFields, $captionTemplate)
+    {
         $languages = $this->languages;
 
-        $pageLang = $this->modx->getConfig('_lang');
+
         //делаем пол¤ mtv мультимовными
         $fields = $settings[$fieldKey];
         $langFields = [];
@@ -297,8 +303,9 @@ class bLang
             $temp = $fields[$fieldName];
             foreach ($languages as $lang) {
                 $suffix = $this->suffixes[$lang];
+
                 $tempLang = $temp;
-                $tempLang['caption'] = str_replace(['#caption#','#lang#'],[$tempLang['caption'],$lang],$captionTemplate);
+                $tempLang['caption'] = str_replace(['#caption#', '#lang#'], [$tempLang['caption'], $lang], $captionTemplate);
                 $langFields[$fieldName][$fieldName . $suffix] = $tempLang;
             }
         }
@@ -318,22 +325,26 @@ class bLang
         }
         return $settings;
     }
-    public function changeClientSettingsFields($settings, $changesFields = [],$captionTemplate = '#caption# (#lang#)'){
-        $settings = $this->changeFields($settings,'settings',$changesFields,$captionTemplate);
+
+    public function changeClientSettingsFields($settings, $changesFields = [], $captionTemplate = '#caption# (#lang#)')
+    {
+        $settings = $this->changeFields($settings, 'settings', $changesFields, $captionTemplate);
         return $settings;
     }
-    public function bLangChangeMultitvFields($settings, $changesFields = [],$captionTemplate = '#caption# (#lang#)',$templates = ['templates'])
+
+    public function bLangChangeMultitvFields($settings, $changesFields = [], $captionTemplate = '#caption# (#lang#)', $templates = ['templates'])
     {
 
 
-        $settings = $this->changeFields($settings,'fields',$changesFields,$captionTemplate);
-
+        $settings = $this->changeFields($settings, 'fields', $changesFields, $captionTemplate);
+        $pageLang = $this->modx->getConfig('_lang');
+        $suffix = $this->suffixes[$pageLang];
         //замена полей
         if (is_array($templates)) {
             foreach ($templates as $templateKey) {
                 $rowTpl = $settings[$templateKey]['rowTpl'];
                 foreach ($changesFields as $fieldName) {
-                    $rowTpl = str_replace('[+' . $fieldName . '+]', '[+' . $fieldName . '_' . $pageLang . '+]', $rowTpl);
+                    $rowTpl = str_replace('[+' . $fieldName . '+]', '[+' . $fieldName . $suffix . '+]', $rowTpl);
                 }
                 $settings[$templateKey]['rowTpl'] = $rowTpl;
             }
@@ -342,14 +353,15 @@ class bLang
         return $settings;
     }
 
-    public function isDefaultField($field){
+    public function isDefaultField($field)
+    {
         $default_field = array(
             'id', 'type', 'contentType', 'pagetitle', 'longtitle', 'description', 'alias', 'link_attributes', 'published', 'pub_date',
             'unpub_date', 'parent', 'isfolder', 'introtext', 'content', 'richtext', 'template', 'menuindex', 'searchable',
             'cacheable', 'createdon', 'createdby', 'editedon', 'editedby', 'deleted', 'deletedon', 'deletedby', 'publishedon',
             'publishedby', 'menutitle', 'donthit', 'privateweb', 'privatemgr', 'content_dispo', 'hidemenu', 'alias_visible'
         );
-        return in_array($field,$default_field);
+        return in_array($field, $default_field);
     }
 
 
